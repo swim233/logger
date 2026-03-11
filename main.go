@@ -111,7 +111,7 @@ func tee(cfg *ZapConfig, encoder zapcore.Encoder, levelEnabler zapcore.LevelEnab
 // 构建Option
 func buildOptions(cfg *ZapConfig, levelEnabler zapcore.LevelEnabler) (options []zap.Option) {
 	if cfg.Caller {
-		options = append(options, zap.AddCaller(), zap.AddCallerSkip(1))
+		options = append(options, zap.AddCaller())
 	}
 
 	if cfg.StackTrace {
