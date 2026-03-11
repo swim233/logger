@@ -11,6 +11,7 @@ import (
 
 var Logger *zap.Logger
 var Suger *zap.SugaredLogger
+var SkipCaller = 0
 
 // TODO:重构logger
 type ZapConfig struct {
@@ -111,7 +112,7 @@ func tee(cfg *ZapConfig, encoder zapcore.Encoder, levelEnabler zapcore.LevelEnab
 // 构建Option
 func buildOptions(cfg *ZapConfig, levelEnabler zapcore.LevelEnabler) (options []zap.Option) {
 	if cfg.Caller {
-		options = append(options, zap.AddCaller())
+		options = append(options, zap.AddCaller(), zap.AddCallerSkip(SkipCaller))
 	}
 
 	if cfg.StackTrace {
