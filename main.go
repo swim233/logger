@@ -12,6 +12,7 @@ import (
 var Logger *zap.Logger
 var Suger *zap.SugaredLogger
 
+// TODO:重构logger
 type ZapConfig struct {
 	Prefix     string         `yaml:"prefix" mapstructure:"prefix"`
 	TimeFormat string         `yaml:"timeFormat" mapstructure:"timeFormat"`
@@ -52,7 +53,8 @@ func InitLogger() {
 	encoder := zapEncoder(config)
 	// 构建日志级别
 	levelEnabler := func() zapcore.Level {
-		return zapcore.InfoLevel
+		//TODO:增加生产 info
+		return zapcore.DebugLevel
 	}()
 	// 最后获得Core和Options
 	subCore, options := tee(config, encoder, levelEnabler)
@@ -109,7 +111,7 @@ func tee(cfg *ZapConfig, encoder zapcore.Encoder, levelEnabler zapcore.LevelEnab
 // 构建Option
 func buildOptions(cfg *ZapConfig, levelEnabler zapcore.LevelEnabler) (options []zap.Option) {
 	if cfg.Caller {
-		options = append(options, zap.AddCaller())
+		options = append(options, zap.AddCaller(), zap.AddCallerSkip(1))
 	}
 
 	if cfg.StackTrace {
@@ -142,12 +144,34 @@ func zapWriteSyncer(cfg *ZapConfig) zapcore.WriteSyncer {
 	return zap.CombineWriteSyncers(syncers...)
 }
 
-type ZapBotLogger struct{}
-
-func (l *ZapBotLogger) Println(v ...any) {
-	Suger.Info(v...)
+func Info(template string, args ...any) {
+	Suger.Infof(template, args...)
+}
+func Warn(template string, args ...any) {
+	Suger.Warnf(template, args...)
+}
+func Error(template string, args ...any) {
+	Suger.Errorf(template, args...)
+}
+func Debug(template string, args ...any) {
+	Suger.Debugf(template, args...)
+}
+func Panic(template string, args ...any) {
+	Suger.Panicf(template, args...)
 }
 
-func (l *ZapBotLogger) Printf(format string, v ...any) {
-	Suger.Infof(format, v...)
+func Infoln(args ...any) {
+	Suger.Infoln(args...)
+}
+func Warnln(args ...any) {
+	Suger.Warnln(args...)
+}
+func Errorln(args ...any) {
+	Suger.Errorln(args...)
+}
+func Debugln(args ...any) {
+	Suger.Debugln(args...)
+}
+func Panicln(args ...any) {
+	Suger.Panicln(args...)
 }
