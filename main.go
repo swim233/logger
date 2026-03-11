@@ -32,7 +32,7 @@ type LogFileConfig struct {
 	Errput   []string `yaml:"errput" mapstructure:"errput"`
 }
 
-func InitLogger() {
+func init() {
 	config := &ZapConfig{
 		Prefix:     "ZapLogTest",
 		TimeFormat: "2006/01/02 - 15:04:05",
